@@ -3,9 +3,7 @@ package com.example.challenge2.presentation;
 import com.example.challenge2.application.UserService;
 import com.example.challenge2.domain.model.User;
 import com.example.challenge2.presentation.dto.UserDTO;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.commons.text.StringEscapeUtils;
@@ -36,13 +34,25 @@ public class UserController {
   }
 
   @PostMapping
-  @Operation(summary = "creates an user")
+  @Operation(
+      security = {
+        @SecurityRequirement(name = "BasicAuthentication"),
+        @SecurityRequirement(name = "user"),
+        @SecurityRequirement(name = "pass")
+      },
+      summary = "creates an user")
   public User createUser(@RequestBody @Valid UserDTO userDTO) {
     return userService.create(userDTO);
   }
 
   @DeleteMapping("/{username}")
-  @Operation(summary = "deletes an user given its username")
+  @Operation(
+      security = {
+        @SecurityRequirement(name = "BasicAuthentication"),
+        @SecurityRequirement(name = "user"),
+        @SecurityRequirement(name = "pass")
+      },
+      summary = "deletes an user given its username")
   public void deleteUser(@PathVariable String username) {
     String sanitizedUsername = StringEscapeUtils.escapeJava(username);
     userService.deleteByUserName(sanitizedUsername);
