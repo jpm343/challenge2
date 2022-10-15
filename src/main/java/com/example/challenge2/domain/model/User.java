@@ -40,7 +40,7 @@ public class User {
   @Email(message = "{userAccount.email.isNotValid}")
   private String email;
 
-  @Column(unique = true, nullable = false, length = 256)
+  @Column(nullable = false, length = 256)
   @NotNull(message = "{userAccount.phone.notNull}")
   @Pattern(regexp = ValidationRegexPattern.PHONE_NUMBER, message = "{userAccount.phone.pattern}")
   private String phone;
@@ -51,6 +51,8 @@ public class User {
     this.email = email;
     this.phone = phone;
   }
+
+  protected User() {}
 
   @Override
   public String toString() {

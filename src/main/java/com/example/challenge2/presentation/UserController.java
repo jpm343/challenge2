@@ -1,31 +1,50 @@
 package com.example.challenge2.presentation;
 
 import com.example.challenge2.application.UserService;
+import com.example.challenge2.domain.model.User;
+import com.example.challenge2.presentation.dto.UserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.commons.text.StringEscapeUtils;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/v1/users")
 public class UserController {
-  private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
   private final UserService userService;
+
   public UserController(final UserService userService) {
     this.userService = userService;
   }
 
   @GetMapping
-  @Operation(summary = "get all users")
+  @Operation(summary = "gets all users")
   public List<UserDTO> getAllUsers() {
     return userService.getAll();
   }
 
-  @GetMapping("")
+  @GetMapping("/{email}")
+  @Operation(summary = "gets an user by email")
+  public UserDTO getUserByEmail(@PathVariable String email) {
+    String sanitizedEmail = StringEscapeUtils.escapeJava(email);
+    return userService.getByEmail(sanitizedEmail);
+  }
 
+  @PostMapping
+  @Operation(summary = "creates an user")
+  public User createUser(@RequestBody @Valid UserDTO userDTO) {
+    return userService.create(userDTO);
+  }
+
+  @DeleteMapping("/{username}")
+  @Operation(summary = "deletes an user given its username")
+  public void deleteUser(@PathVariable String username) {
+    String sanitizedUsername = StringEscapeUtils.escapeJava(username);
+    userService.deleteByUserName(sanitizedUsername);
+  }
 }
